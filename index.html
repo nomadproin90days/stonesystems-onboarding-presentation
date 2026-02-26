@@ -3,11 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Onboarding Call Presentation — Stone Systems</title>
+  <title>Onboarding Call — Stone Systems</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Preload all slide images to prevent first-visit flash -->
   <link rel="preload" as="image" href="./images/onboarding/website.png">
   <link rel="preload" as="image" href="./images/onboarding/missed-call.png">
   <link rel="preload" as="image" href="./images/onboarding/google-profile.png">
@@ -17,807 +16,437 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #030303;
-      --surface: #0a0a0a;
-      --surface-hi: #111111;
-      --divider: rgba(255,255,255,0.1);
-      --divider-mid: rgba(255,255,255,0.18);
-      --t1: #ffffff;
-      --t2: #a1a1a1;
-      --t3: #5c5c5c;
-      --copper: #d4a373;
-      --copper-dim: rgba(212,163,115,0.08);
-      --copper-border: rgba(212,163,115,0.25);
-      --steel: #7ab5cc;
-      --green: #72b58a;
-      --red: #e07a5f;
-      --chrome-h: 60px;
-      --font-serif: 'Playfair Display', Georgia, serif;
-      --font-sans: 'Inter', system-ui, sans-serif;
+      --bg:             #030303;
+      --surface:        #0d0d0d;
+      --surface-hi:     #161616;
+      --divider:        rgba(255,255,255,0.08);
+      --t1:             #ffffff;
+      --t2:             #999999;
+      --t3:             #555555;
+      --copper:         #d4a373;
+      --copper-dim:     rgba(212,163,115,0.07);
+      --copper-border:  rgba(212,163,115,0.22);
+      --steel:          #7ab5cc;
+      --green:          #72b58a;
+      --red:            #e07a5f;
+      --serif:          'Playfair Display', Georgia, serif;
+      --sans:           'Inter', system-ui, sans-serif;
+      --chrome-h:       56px;
+      --ease:           cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     html, body {
-      height: 100%;
-      overflow: hidden;
-      background: var(--bg);
-      color: var(--t1);
-      font-family: var(--font-sans);
+      height: 100%; overflow: hidden;
+      background: var(--bg); color: var(--t1);
+      font-family: var(--sans);
       -webkit-tap-highlight-color: transparent;
     }
 
-    :focus { outline: none; }
-    :focus-visible { outline: 2px solid var(--copper); outline-offset: 3px; border-radius: 6px; }
+    /* ── CHROME ──────────────────────────────────────── */
+    #chrome {
+      position: fixed; top: 0; left: 0; right: 0;
+      height: var(--chrome-h);
+      display: flex; align-items: center;
+      padding: 0 20px; gap: 12px;
+      border-bottom: 1px solid var(--divider);
+      background: var(--bg); z-index: 100;
+    }
+    #chrome-left  { font-size: 0.6rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--t3); flex: 1; }
+    #chrome-name  { font-size: 0.65rem; letter-spacing: 0.06em; color: var(--t2); }
+    #chrome-right { display: flex; align-items: center; gap: 10px; }
+    #slide-counter { font-size: 0.68rem; letter-spacing: 0.04em; color: var(--t3); font-variant-numeric: tabular-nums; }
 
-    /* ── VIEWER ─────────────────────────────────────── */
+    /* Progress bar */
+    #progress-track {
+      position: fixed; top: var(--chrome-h); left: 0; right: 0;
+      height: 2px; background: var(--divider); z-index: 100;
+    }
+    #progress-fill {
+      height: 100%; width: 0%;
+      background: var(--copper);
+      transition: width 0.45s var(--ease);
+    }
+
+    /* Nav arrows */
+    .arrow-btn {
+      position: fixed; top: 50%; transform: translateY(-50%);
+      width: 40px; height: 40px; border-radius: 50%;
+      background: var(--surface-hi); border: 1px solid var(--divider);
+      color: var(--t2); font-size: 1rem; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 100; transition: background 0.2s, color 0.2s, opacity 0.2s;
+    }
+    .arrow-btn:hover { background: var(--surface); color: var(--t1); }
+    .arrow-btn:disabled { opacity: 0.2; pointer-events: none; }
+    #btn-prev { left: 12px; }
+    #btn-next { right: 12px; }
+
+    /* Dot nav */
+    #dot-nav {
+      position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px; z-index: 100;
+    }
+    .dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--t3); border: none; cursor: pointer;
+      transition: background 0.25s, transform 0.25s;
+    }
+    .dot.active { background: var(--copper); transform: scale(1.4); }
+
+    /* Fullscreen btn */
+    #btn-fs {
+      background: none; border: 1px solid var(--divider);
+      color: var(--t3); font-size: 0.8rem;
+      width: 28px; height: 28px; border-radius: 6px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    #btn-fs:hover { color: var(--t1); border-color: var(--t2); }
+
+    /* SR only */
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+    /* ── VIEWER ──────────────────────────────────────── */
     #viewer {
       position: fixed;
-      inset: 0;
+      inset: var(--chrome-h) 0 0 0;
       overflow: hidden;
     }
 
-    /* ── SLIDES ─────────────────────────────────────── */
+    /* ── SLIDES ──────────────────────────────────────── */
     .slide {
-      position: absolute;
-      inset: 0;
-      background: var(--surface);
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      padding: clamp(24px, 4vw, 56px) clamp(48px, 8vw, 100px);
+      overflow-y: auto; overflow-x: hidden;
+      /* Hidden state */
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.35s ease;
-      will-change: opacity;
     }
     .slide.active {
       opacity: 1;
       pointer-events: auto;
     }
+    /* Slide transition: fade only — no transform, no flicker */
+    .slide.will-exit  { transition: opacity 0.25s ease; opacity: 0; }
+    .slide.will-enter { transition: opacity 0.35s var(--ease) 0.1s; opacity: 1; }
 
-    .s-inner {
-      position: absolute;
-      inset: 0;
-      padding: calc(var(--chrome-h) + 40px) clamp(32px,8vw,100px) calc(var(--chrome-h) + 40px);
-      display: flex;
-      flex-direction: column;
-      overflow-y: auto;
-      overflow-x: hidden;
+    /* ── CONTENT ENTER ANIMATION ─────────────────────── */
+    /* Elements animate in via CSS only — no JS opacity manipulation */
+    .slide.active .anim {
+      animation: slideUp 0.5s var(--ease) both;
+    }
+    .slide.active .anim:nth-child(1)  { animation-delay: 0.05s; }
+    .slide.active .anim:nth-child(2)  { animation-delay: 0.10s; }
+    .slide.active .anim:nth-child(3)  { animation-delay: 0.15s; }
+    .slide.active .anim:nth-child(4)  { animation-delay: 0.20s; }
+    .slide.active .anim:nth-child(5)  { animation-delay: 0.25s; }
+    .slide.active .anim:nth-child(6)  { animation-delay: 0.28s; }
+    .slide.active .anim:nth-child(7)  { animation-delay: 0.31s; }
+    .slide.active .anim:nth-child(8)  { animation-delay: 0.34s; }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
-    .s-header { margin-bottom: clamp(16px,2.5vh,28px); }
+    /* Stagger list items */
+    .slide.active .check-list li,
+    .slide.active .cross-list li,
+    .slide.active .need-item,
+    .slide.active .resp-item,
+    .slide.active .agenda-item,
+    .slide.active .tl-step {
+      animation: slideUp 0.45s var(--ease) both;
+    }
+    .slide.active .check-list li:nth-child(1),
+    .slide.active .cross-list li:nth-child(1),
+    .slide.active .need-item:nth-child(1),
+    .slide.active .resp-item:nth-child(1),
+    .slide.active .agenda-item:nth-child(1),
+    .slide.active .tl-step:nth-child(1) { animation-delay: 0.22s; }
+    .slide.active .check-list li:nth-child(2),
+    .slide.active .cross-list li:nth-child(2),
+    .slide.active .need-item:nth-child(2),
+    .slide.active .resp-item:nth-child(2),
+    .slide.active .agenda-item:nth-child(2),
+    .slide.active .tl-step:nth-child(2) { animation-delay: 0.28s; }
+    .slide.active .check-list li:nth-child(3),
+    .slide.active .cross-list li:nth-child(3),
+    .slide.active .need-item:nth-child(3),
+    .slide.active .resp-item:nth-child(3),
+    .slide.active .agenda-item:nth-child(3),
+    .slide.active .tl-step:nth-child(3) { animation-delay: 0.34s; }
+    .slide.active .check-list li:nth-child(4),
+    .slide.active .cross-list li:nth-child(4),
+    .slide.active .need-item:nth-child(4),
+    .slide.active .resp-item:nth-child(4),
+    .slide.active .agenda-item:nth-child(4),
+    .slide.active .tl-step:nth-child(4) { animation-delay: 0.40s; }
+    .slide.active .check-list li:nth-child(5),
+    .slide.active .tl-step:nth-child(5) { animation-delay: 0.46s; }
 
-    /* ── TYPOGRAPHY ─────────────────────────────────── */
+    /* ── TYPOGRAPHY ──────────────────────────────────── */
     .eyebrow {
-      font-family: var(--font-sans);
-      font-size: 0.62rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.2em;
-      color: var(--copper);
-      margin-bottom: 10px;
-      display: block;
+      font-size: 0.6rem; letter-spacing: 0.14em;
+      text-transform: uppercase; color: var(--copper);
+      margin-bottom: 10px; display: block;
     }
-
     .display-xl {
-      font-family: var(--font-serif);
-      font-size: clamp(3.5rem,7vw,7.5rem);
-      font-weight: 700;
-      line-height: 1.02;
-      color: var(--t1);
-      letter-spacing: -0.02em;
+      font-family: var(--serif);
+      font-size: clamp(2.8rem, 6.5vw, 6rem);
+      font-weight: 900; line-height: 1.02;
+      letter-spacing: -0.02em; color: var(--t1);
+      margin-bottom: 16px;
     }
-
+    .display-xl em { font-style: italic; color: var(--copper); }
     .display-lg {
-      font-family: var(--font-serif);
-      font-size: clamp(2.5rem,5vw,5rem);
-      font-weight: 700;
-      line-height: 1.05;
-      color: var(--t1);
-      letter-spacing: -0.01em;
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4.5vw, 4rem);
+      font-weight: 900; line-height: 1.05;
+      letter-spacing: -0.02em; color: var(--t1);
+      margin-bottom: 12px;
     }
-
     .display-md {
-      font-family: var(--font-serif);
-      font-size: clamp(1.8rem,3.5vw,3.2rem);
-      font-weight: 700;
-      line-height: 1.1;
-      color: var(--t1);
+      font-family: var(--serif);
+      font-size: clamp(1.5rem, 3vw, 2.8rem);
+      font-weight: 700; line-height: 1.1;
+      letter-spacing: -0.01em; color: var(--t1);
+      margin-bottom: 8px;
     }
-
     .h2 {
-      font-family: var(--font-sans);
-      font-size: clamp(1.1rem,1.8vw,1.55rem);
-      font-weight: 700;
-      color: var(--t1);
+      font-size: clamp(1.1rem, 2vw, 1.6rem);
+      font-weight: 700; color: var(--t1); margin-bottom: 2px;
     }
-
     .body {
-      font-family: var(--font-sans);
-      font-size: clamp(0.82rem,1.1vw,0.95rem);
-      line-height: 1.65;
-      color: var(--t2);
+      font-size: clamp(0.82rem, 1.1vw, 0.95rem);
+      line-height: 1.65; color: var(--t2); margin-bottom: 12px;
     }
+    .caption { font-size: 0.72rem; color: var(--t3); line-height: 1.5; }
+    .rule { width: 100%; height: 1px; background: var(--divider); margin: 16px 0; }
+    .rule.copper { background: var(--copper-border); }
 
-    .caption {
-      font-family: var(--font-sans);
-      font-size: 0.72rem;
-      color: var(--t3);
+    /* ── LAYOUTS ─────────────────────────────────────── */
+    .s-inner { flex: 1; display: flex; flex-direction: column; }
+    .s-body-split, .s-body-split-40 {
+      flex: 1; display: flex; gap: clamp(24px, 4vw, 60px); align-items: flex-start;
     }
-
-    /* ── CHROME ─────────────────────────────────────── */
-    #progress-track {
-      position: fixed;
-      inset: 0 0 auto 0;
-      height: 2px;
-      background: var(--divider);
-      z-index: 100;
+    .s-col {
+      flex: 1; display: flex; flex-direction: column;
+      gap: 8px; min-width: 0;
     }
-    #progress-fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, var(--copper), var(--steel));
-      transition: width 0.35s ease;
-      border-radius: 0 2px 2px 0;
-    }
-
-    #grad-top {
-      position: fixed;
-      inset: 0 0 auto 0;
-      height: 120px;
-      background: linear-gradient(to bottom, rgba(9,9,11,0.85), transparent);
-      z-index: 10;
-      pointer-events: none;
-    }
-    #grad-bottom {
-      position: fixed;
-      inset: auto 0 0 0;
-      height: 100px;
-      background: linear-gradient(to top, rgba(9,9,11,0.85), transparent);
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    #top-bar {
-      position: fixed;
-      inset: 0 0 auto 0;
-      height: var(--chrome-h);
-      display: flex;
-      align-items: center;
-      padding: 0 clamp(16px,3vw,32px);
-      z-index: 50;
-      gap: 16px;
-    }
-    #top-bar-left {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      color: var(--t3);
-      white-space: nowrap;
-    }
-    #slide-name-chrome {
-      flex: 1;
-      text-align: center;
-      font-size: 0.65rem;
-      font-weight: 600;
-      letter-spacing: 0.06em;
-      color: var(--t2);
-      text-transform: uppercase;
-    }
-    #top-bar-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    #btn-fs {
-      width: 30px;
-      height: 30px;
-      border-radius: 6px;
-      border: 1px solid var(--divider);
-      background: var(--surface-hi);
-      color: var(--t2);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.8rem;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    #btn-fs:hover { border-color: var(--copper); color: var(--copper); }
-
-    #bottom-bar {
-      position: fixed;
-      inset: auto 0 0 0;
-      height: var(--chrome-h);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0 clamp(16px,3vw,32px);
-      z-index: 50;
-    }
-    #dot-nav {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: var(--t3);
-      cursor: pointer;
-      transition: background 0.2s, transform 0.2s, width 0.2s;
-      border: none;
-      padding: 0;
-    }
-    .dot.active {
-      background: var(--copper);
-      width: 16px;
-      border-radius: 3px;
-    }
-    #slide-counter {
-      position: absolute;
-      right: clamp(16px,3vw,32px);
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: var(--t3);
-    }
-
-    /* ── ARROW BUTTONS ──────────────────────────────── */
-    .arrow-btn {
-      position: fixed;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 1px solid var(--divider);
-      background: var(--surface-hi);
-      color: var(--t1);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      z-index: 50;
-      opacity: 0.45;
-      transition: opacity 0.2s, border-color 0.2s;
-    }
-    .arrow-btn:hover { opacity: 1; border-color: var(--copper); }
-    .arrow-btn:disabled { opacity: 0.15; cursor: not-allowed; }
-    #btn-prev { left: clamp(8px,2vw,20px); }
-    #btn-next { right: clamp(8px,2vw,20px); }
-
-    /* ── SR ─────────────────────────────────────────── */
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
-    }
-
-    /* ── LAYOUT HELPERS ─────────────────────────────── */
-    .s-body-split {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: clamp(24px,4vw,64px);
-      align-items: center;
-    }
-    .s-body-split-40 {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 2fr 3fr;
-      gap: clamp(24px,4vw,64px);
-      align-items: center;
-    }
-    .s-body-flow {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 20px;
-    }
-    .s-col { display: flex; flex-direction: column; justify-content: center; }
-
-    .spacer-auto { flex: 1; }
-    .spacer-8 { height: 8px; }
+    .s-header { margin-bottom: 28px; }
+    .centered { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; }
+    .centered-left { display: flex; flex-direction: column; }
+    .spacer-auto { flex: 1; min-height: 16px; }
+    .spacer-8  { height: 8px; }
     .spacer-12 { height: 12px; }
     .spacer-16 { height: 16px; }
     .spacer-20 { height: 20px; }
-    .spacer-24 { height: 24px; }
 
-    /* ── RULE ───────────────────────────────────────── */
-    .rule { height: 1px; background: var(--divider); margin: 14px 0; }
-    .rule.copper { background: var(--copper); opacity: 0.4; border: none; }
-
-    /* ── CONTACT CARD ───────────────────────────────── */
+    /* ── CONTACT CARD ────────────────────────────────── */
     .contact-card {
-      background: var(--surface-hi);
-      border: 1px solid var(--divider);
-      border-left: 3px solid var(--copper);
-      border-radius: 12px;
-      padding: clamp(16px,2.5vh,24px);
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      transition: box-shadow 0.22s, border-color 0.22s;
+      background: var(--surface); border: 1px solid var(--divider);
+      border-radius: 12px; padding: clamp(16px, 2.5vw, 28px);
+      display: flex; flex-direction: column; gap: 8px;
     }
-    .contact-card:hover {
-      box-shadow: 0 0 0 1px var(--copper-border), 0 10px 40px rgba(196,144,106,0.1);
-    }
-    .contact-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: clamp(0.78rem,1vw,0.9rem);
-      font-weight: 500;
-      color: var(--t1);
-    }
-    .contact-row a {
-      color: var(--t1);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-    .contact-row a:hover { color: var(--copper); border-bottom-color: var(--copper); }
-    .contact-icon { font-size: 0.9rem; flex-shrink: 0; }
+    .contact-row { display: flex; align-items: center; gap: 10px; font-size: 0.82rem; }
+    .contact-row a { color: var(--copper); text-decoration: none; }
+    .contact-row a:hover { text-decoration: underline; }
+    .contact-icon { font-size: 0.9rem; width: 18px; flex-shrink: 0; }
 
-    /* ── CHECK / CROSS LISTS ────────────────────────── */
-    .check-list, .cross-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: clamp(6px,1.2vh,12px);
-    }
-    .check-list li, .cross-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 9px;
-      font-size: clamp(0.78rem,1vw,0.9rem);
-      font-weight: 500;
-      line-height: 1.4;
-    }
-    .check-list li { color: var(--t1); }
-    .cross-list li { color: var(--t2); }
-    .list-icon { flex-shrink: 0; margin-top: 2px; }
+    /* ── LISTS ───────────────────────────────────────── */
     .list-label {
-      font-size: 0.58rem;
-      font-weight: 700;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      color: var(--t3);
-      margin-bottom: 6px;
+      font-size: 0.55rem; letter-spacing: 0.12em;
+      text-transform: uppercase; color: var(--t3); margin-bottom: 6px;
     }
     .list-label.red { color: var(--red); opacity: 0.6; }
+    .check-list, .cross-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .check-list li, .cross-list li {
+      font-size: clamp(0.76rem, 1vw, 0.85rem);
+      color: var(--t2); display: flex; align-items: baseline; gap: 8px; line-height: 1.45;
+    }
+    .list-icon { font-size: 0.75rem; flex-shrink: 0; }
 
-    /* ── SCREEN FRAME ───────────────────────────────── */
+    /* ── SCREEN FRAME ────────────────────────────────── */
     .screen-frame {
-      background: var(--surface-hi);
-      border-radius: 14px;
+      border-radius: 10px; overflow: hidden;
       border: 1px solid var(--divider);
-      box-shadow: 0 20px 80px rgba(0,0,0,0.7);
-      overflow: hidden;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
+      background: var(--surface);
+      display: flex; flex-direction: column;
+      width: 100%;
     }
     .screen-frame-bar {
-      height: 26px;
-      background: #1a1a22;
+      height: 28px; background: var(--surface-hi);
       border-bottom: 1px solid var(--divider);
-      display: flex;
-      align-items: center;
-      padding: 0 10px;
-      gap: 5px;
-      flex-shrink: 0;
+      display: flex; align-items: center;
+      padding: 0 10px; gap: 5px; flex-shrink: 0;
     }
-    .screen-dot { width: 7px; height: 7px; border-radius: 50%; }
-    .screen-frame > img, .screen-frame-body {
-      flex: 1;
-      min-height: 0;
-      width: 100%;
-      object-fit: contain;
-      object-position: top center;
-      will-change: transform;
-      backface-visibility: hidden;
+    .screen-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .screen-frame img {
+      width: 100%; display: block;
+      object-fit: contain; object-position: top center;
     }
 
-    /* ── FLOW DIAGRAM ───────────────────────────────── */
-    .flow-diagram {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 16px;
-      flex: 1;
-      width: 100%;
-    }
-    .flow-step {
-      flex: 1;
-      max-width: 200px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 12px;
-    }
-    .flow-step-icon {
-      width: clamp(64px,8vw,88px);
-      height: clamp(64px,8vw,88px);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(1.6rem,2.5vw,2.2rem);
-      border: 2px solid;
-    }
-    .flow-step.neg .flow-step-icon { border-color: var(--red); background: rgba(190,104,104,0.08); }
-    .flow-step.mid .flow-step-icon { border-color: var(--copper); background: var(--copper-dim); }
-    .flow-step.pos .flow-step-icon { border-color: var(--green); background: rgba(114,181,138,0.08); }
-    .flow-step-label { font-size: clamp(0.78rem,1.1vw,0.92rem); font-weight: 700; color: var(--t1); line-height: 1.3; }
-    .flow-step-desc { font-size: clamp(0.68rem,0.9vw,0.78rem); color: var(--t2); }
-    .flow-arrow { font-size: clamp(1.2rem,2vw,1.8rem); color: var(--t3); flex-shrink: 0; }
-    .result-bar {
-      background: var(--surface-hi);
-      border: 1px solid var(--divider);
-      border-radius: 8px;
-      padding: 12px 20px;
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      margin-top: 8px;
-      width: 100%;
-    }
-
-    /* ── TIMELINE ───────────────────────────────────── */
-    .timeline-container {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      gap: 0;
-      min-height: 0;
-    }
-    .timeline-track-row {
-      position: relative;
-      height: 3px;
-      background: var(--divider);
-      border-radius: 2px;
-      margin: 0 clamp(20px,4vw,50px);
-    }
-    .timeline-track-fill {
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, var(--steel), #f97316, var(--green), #eab308, #7c3aed);
-      border-radius: 2px;
-    }
-    .timeline-steps {
-      display: flex;
-      justify-content: space-between;
-    }
-    .tl-step {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      gap: 6px;
-      padding: 0 4px;
-    }
-    .tl-step.order-top { flex-direction: column-reverse; }
-    .tl-circle {
-      width: clamp(44px,6vw,58px);
-      height: clamp(44px,6vw,58px);
-      border-radius: 50%;
-      border: 2.5px solid;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(1rem,1.6vw,1.3rem);
-      background: var(--surface);
-    }
-    .tl-day { font-size: clamp(0.58rem,0.8vw,0.68rem); font-weight: 800; letter-spacing: 0.04em; }
-    .tl-name { font-size: clamp(0.6rem,0.85vw,0.72rem); font-weight: 700; color: var(--t1); line-height: 1.25; }
-    .tl-desc { font-size: clamp(0.55rem,0.75vw,0.65rem); color: var(--t3); }
-
-    /* ── AGENDA ─────────────────────────────────────── */
-    .agenda-list { list-style: none; display: flex; flex-direction: column; gap: 0; width: 100%; max-width: 640px; }
-    .agenda-item {
-      display: flex;
-      align-items: baseline;
-      gap: 20px;
-      padding: clamp(10px,1.8vh,18px) 0;
-      border-bottom: 1px solid var(--divider);
-    }
-    .agenda-item:last-child { border-bottom: none; }
-    .agenda-num {
-      font-family: var(--font-serif);
-      font-size: clamp(0.9rem,1.4vw,1.2rem);
-      font-weight: 700;
-      color: var(--copper);
-      opacity: 0.55;
-      min-width: 2ch;
-      flex-shrink: 0;
-    }
-    .agenda-text {
-      font-family: var(--font-serif);
-      font-size: clamp(1rem,1.8vw,1.65rem);
-      font-weight: 700;
-      color: var(--t1);
-      line-height: 1.2;
-    }
-
-    /* ── STAT BOXES ─────────────────────────────────── */
-    .stat-row { display: flex; gap: 16px; margin: 24px 0; }
-    .stat-box {
-      flex: 1;
-      background: var(--surface-hi);
-      border: 1px solid var(--divider);
-      border-radius: 12px;
-      padding: clamp(14px,2.5vh,22px) clamp(16px,2vw,24px);
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-    .stat-number {
-      font-family: var(--font-serif);
-      font-size: clamp(1.8rem,3vw,3rem);
-      font-weight: 700;
-      line-height: 1;
-    }
-    .stat-label { font-size: 0.7rem; font-weight: 500; color: var(--t3); letter-spacing: 0.04em; }
-
-    /* ── NEED LIST ──────────────────────────────────── */
-    .need-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
-    .need-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      padding: clamp(10px,1.5vh,14px) clamp(12px,1.5vw,16px);
-      background: var(--surface-hi);
-      border-radius: 10px;
-      border: 1px solid var(--divider);
-    }
-    .need-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
-    .need-text { font-size: clamp(0.78rem,1vw,0.9rem); font-weight: 600; color: var(--t1); line-height: 1.3; }
-    .need-note { font-size: 0.68rem; color: var(--t3); margin-top: 3px; line-height: 1.4; }
-
-    /* ── PRICE CARDS ────────────────────────────────── */
-    .price-cards { display: flex; flex-direction: column; gap: 14px; height: 100%; justify-content: center; }
-    .price-card {
-      padding: clamp(16px,2.5vh,22px);
-      border-radius: 12px;
-      border: 1px solid var(--divider-mid);
-      background: var(--surface-hi);
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .price-card.featured { border-color: var(--copper-border); background: rgba(196,144,106,0.07); }
-    .price-label-sm { font-size: 0.6rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--t3); }
-    .price-card.featured .price-label-sm { color: var(--copper); }
-    .price-amount {
-      font-family: var(--font-serif);
-      font-size: clamp(1.6rem,2.5vw,2.4rem);
-      font-weight: 700;
-      color: var(--t1);
-      line-height: 1;
-    }
-    .price-card.featured .price-amount { color: var(--copper); }
-    .price-desc { font-size: 0.78rem; color: var(--t2); line-height: 1.4; }
-    .price-strike { font-size: 0.75rem; color: var(--t3); text-decoration: line-through; }
-
-    /* ── RESPONSE BARS ──────────────────────────────── */
-    .resp-list { display: flex; flex-direction: column; gap: clamp(10px,1.8vh,18px); }
-    .resp-item { display: flex; flex-direction: column; gap: 6px; }
-    .resp-header { display: flex; justify-content: space-between; align-items: baseline; }
-    .resp-label { font-size: clamp(0.78rem,1vw,0.9rem); font-weight: 600; color: var(--t1); }
-    .resp-time { font-size: clamp(0.68rem,0.9vw,0.8rem); font-weight: 700; color: var(--copper); }
-    .resp-bar-track { height: 3px; background: var(--divider); border-radius: 2px; overflow: hidden; }
-    .resp-bar-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--steel), var(--copper)); }
-
-    /* ── CTA BUTTON ─────────────────────────────────── */
-    .cta-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      background: var(--copper);
-      color: #fff;
-      font-family: var(--font-sans);
-      font-size: clamp(0.8rem,1.1vw,0.92rem);
-      font-weight: 700;
-      padding: 14px 28px;
-      border-radius: 40px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: background 0.18s, transform 0.18s;
-    }
-    .cta-btn:hover { background: #d4a07a; transform: translateY(-1px); }
-
-    /* ── TAG ────────────────────────────────────────── */
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.62rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      padding: 5px 12px;
-      border-radius: 30px;
-      border: 1px solid var(--divider);
-      color: var(--t2);
-      background: rgba(255,255,255,0.03);
-    }
-    .tag.accent { color: var(--copper); background: rgba(196,144,106,0.1); border-color: rgba(196,144,106,0.22); }
-    .tag.steel { color: var(--steel); background: rgba(122,181,204,0.1); border-color: rgba(122,181,204,0.22); }
-
-    /* ── IMAGE CARD (illustration on light bg) ──────── */
+    /* ── IMG CARD ────────────────────────────────────── */
     .img-card {
-      background: rgba(255, 250, 246, 0.97);
-      border-radius: 18px;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      max-height: clamp(280px,50vh,460px);
-      box-shadow: 0 24px 80px rgba(0,0,0,0.65);
-      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--divider); background: var(--surface);
+      width: 100%;
     }
     .img-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      object-position: center;
-      padding: clamp(12px,2vw,24px);
-      will-change: transform;
-      backface-visibility: hidden;
+      width: 100%; display: block;
+      object-fit: contain; padding: clamp(8px, 1.5vw, 16px);
     }
 
-    /* ── VISUAL PLACEHOLDER ─────────────────────────── */
-    .visual-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      text-align: center;
-      padding: 32px;
-      background: var(--surface-hi);
-      border-radius: 14px;
-      border: 1px solid var(--divider);
-      height: 100%;
-      min-height: 200px;
-    }
-    .ph-icon {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      background: rgba(196,144,106,0.1);
-      border: 1px solid rgba(196,144,106,0.22);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-    }
-    .ph-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--copper); }
-    .ph-sub { font-size: 0.72rem; color: var(--t3); line-height: 1.5; }
-
-    /* ── CONTACT CHIPS (slide 9) ────────────────────── */
-    .chip {
-      border: 1px solid var(--divider-mid);
-      border-radius: 30px;
-      padding: 8px 16px;
-      font-size: 0.78rem;
-      color: var(--t2);
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      transition: border-color 0.15s, color 0.15s;
-    }
-    .chip:hover { border-color: var(--copper); color: var(--copper); }
-
-    /* ── SLIDE 2 center-left ────────────────────────── */
-    .centered-left {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-      max-width: 640px;
-      margin: 0 auto;
-    }
-
-    /* ── SLIDE 10 deco block ────────────────────────── */
+    /* ── DECO BLOCK ──────────────────────────────────── */
     .deco-block {
-      background: var(--surface-hi);
-      border-radius: 16px;
-      border: 1px solid var(--divider);
-      padding: 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
+      border: 1px solid var(--divider); border-radius: 12px;
+      padding: clamp(16px, 2.5vw, 28px); background: var(--copper-dim);
+      display: flex; flex-direction: column; gap: 10px;
     }
 
-    /* ── HERO SLIDE ─────────────────────────────────── */
-    .slide[data-index="0"] {
-      background:
-        radial-gradient(ellipse at 22% 55%, rgba(196,144,106,0.07) 0%, transparent 52%),
-        radial-gradient(ellipse at 78% 28%, rgba(122,181,204,0.045) 0%, transparent 44%),
-        var(--surface);
+    /* ── RESULT BAR ──────────────────────────────────── */
+    .result-bar {
+      background: var(--surface); border: 1px solid var(--divider);
+      border-left: 3px solid var(--copper);
+      border-radius: 6px; padding: 12px 16px;
+      display: flex; align-items: flex-start; gap: 12px; flex-wrap: wrap;
     }
 
-    /* ── MOBILE ─────────────────────────────────────── */
-    @media (max-width: 640px) {
-      .s-body-split, .s-body-split-40 {
-        grid-template-columns: 1fr;
-        overflow-y: auto;
-      }
-      .arrow-btn { display: none; }
-      .stat-row { flex-direction: column; }
+    /* ── STAT ROW ────────────────────────────────────── */
+    .stat-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin: 24px 0; }
+    .stat-box {
+      flex: 1; min-width: 120px;
+      background: var(--surface); border: 1px solid var(--divider);
+      border-radius: 10px; padding: 20px 16px; text-align: center;
     }
+    .stat-number { font-family: var(--serif); font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; line-height: 1; }
+    .stat-label  { font-size: 0.68rem; color: var(--t3); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.08em; }
 
-    /* ── PRINT ──────────────────────────────────────── */
-    @media print {
-      html, body { background: #fff; overflow: visible; height: auto; color: #000; }
-      #top-bar, #bottom-bar, #progress-track, #grad-top, #grad-bottom, .arrow-btn, .sr-only { display: none !important; }
-      :root { --surface: #fff; --surface-hi: #f5f5f5; --t1: #111; --t2: #555; --t3: #999; --divider: rgba(0,0,0,0.1); }
-      #viewer { position: static; height: auto; display: block; }
-      .slide { position: relative !important; opacity: 1 !important; pointer-events: auto !important; transform: none !important; page-break-after: always; height: 100vh; background: #fff; overflow: hidden; }
-      .s-inner { position: static !important; }
+    /* ── TAGS / CHIPS ────────────────────────────────── */
+    .tag {
+      display: inline-flex; align-items: center;
+      padding: 4px 10px; border-radius: 20px;
+      font-size: 0.65rem; letter-spacing: 0.06em;
+      background: var(--surface-hi); border: 1px solid var(--divider);
+      color: var(--t2);
     }
+    .tag.accent { color: var(--copper); border-color: var(--copper-border); background: var(--copper-dim); }
+    .tag.steel  { color: var(--steel);  border-color: rgba(122,181,204,0.2); background: rgba(122,181,204,0.05); }
+    .chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 16px; border-radius: 999px;
+      background: var(--surface); border: 1px solid var(--divider);
+      font-size: 0.78rem; color: var(--t2); text-decoration: none;
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .chip:hover { border-color: var(--copper); color: var(--t1); }
+
+    /* ── CTA BUTTON ──────────────────────────────────── */
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 28px; border-radius: 6px;
+      background: var(--copper); color: #000;
+      font-size: 0.88rem; font-weight: 700;
+      letter-spacing: 0.02em; text-decoration: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .cta-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    /* ── AGENDA ──────────────────────────────────────── */
+    .agenda-list { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-top: 4px; }
+    .agenda-item { display: flex; align-items: baseline; gap: 16px; }
+    .agenda-num  { font-family: var(--serif); font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 900; color: var(--copper); line-height: 1; min-width: 2.5ch; }
+    .agenda-text { font-size: clamp(0.9rem, 1.4vw, 1.1rem); color: var(--t2); line-height: 1.3; }
+
+    /* ── NEED LIST ───────────────────────────────────── */
+    .need-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .need-item  {
+      display: flex; align-items: flex-start; gap: 12px;
+      background: var(--surface); border: 1px solid var(--divider);
+      border-radius: 8px; padding: 12px 14px;
+    }
+    .need-icon { font-size: 1rem; line-height: 1.4; flex-shrink: 0; }
+    .need-text { font-size: 0.84rem; color: var(--t1); font-weight: 500; }
+    .need-note { font-size: 0.7rem; color: var(--t3); margin-top: 2px; }
+
+    /* ── PRICE CARDS ─────────────────────────────────── */
+    .price-cards { display: flex; gap: 16px; flex-wrap: wrap; }
+    .price-card  {
+      flex: 1; min-width: 140px;
+      background: var(--surface); border: 1px solid var(--divider);
+      border-radius: 12px; padding: 20px 18px;
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .price-card.featured { border-color: var(--copper-border); background: var(--copper-dim); }
+    .price-label-sm { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--t3); }
+    .price-amount   { font-family: var(--serif); font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 900; color: var(--copper); line-height: 1.1; }
+    .price-desc     { font-size: 0.72rem; color: var(--t2); margin-top: 4px; line-height: 1.4; }
+    .price-strike   { font-size: 0.65rem; color: var(--t3); text-decoration: line-through; }
+
+    /* ── RESPONSE LIST ───────────────────────────────── */
+    .resp-list { display: flex; flex-direction: column; gap: 12px; }
+    .resp-item { display: flex; flex-direction: column; gap: 6px; }
+    .resp-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .resp-label  { font-size: 0.8rem; color: var(--t2); }
+    .resp-time   { font-size: 0.72rem; color: var(--copper); font-weight: 600; }
+    .resp-bar-track { height: 3px; background: var(--divider); border-radius: 2px; overflow: hidden; }
+    .resp-bar-fill  { height: 100%; background: var(--copper); border-radius: 2px; }
+
+    /* ── TIMELINE ────────────────────────────────────── */
+    .timeline-container { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .timeline-steps { display: flex; justify-content: space-between; }
+    .tl-step  { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .tl-day   { font-size: 0.62rem; font-weight: 600; letter-spacing: 0.05em; text-align: center; }
+    .tl-circle{
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 2px solid var(--divider); background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+    }
+    .tl-name  { font-size: 0.72rem; font-weight: 600; color: var(--t1); text-align: center; }
+    .tl-desc  { font-size: 0.6rem; color: var(--t3); text-align: center; }
+    .timeline-track-row { position: relative; height: 2px; background: var(--divider); }
+    .timeline-track-fill { position: absolute; inset: 0; background: linear-gradient(to right, var(--steel), var(--copper)); }
   </style>
 </head>
 <body>
 
-<!-- CHROME -->
-<div id="progress-track"><div id="progress-fill"></div></div>
-<div id="grad-top"></div>
-<div id="grad-bottom"></div>
-
-<div id="top-bar">
-  <span id="top-bar-left" class="eyebrow" style="color:var(--t3);font-size:0.58rem;">Onboarding Call Presentation</span>
-  <span id="slide-name-chrome"></span>
-  <div id="top-bar-right">
-    <button id="btn-fs" aria-label="Toggle fullscreen" title="Fullscreen (F)">⛶</button>
+<!-- ── CHROME ──────────────────────────────────────── -->
+<div id="chrome">
+  <span id="chrome-left">Onboarding Call Presentation</span>
+  <span id="chrome-name"></span>
+  <div id="chrome-right">
+    <span id="slide-counter">01 / 14</span>
+    <button id="btn-fs" aria-label="Enter fullscreen">⛶</button>
   </div>
 </div>
+<div id="progress-track"><div id="progress-fill"></div></div>
 
-<div id="bottom-bar">
-  <div id="dot-nav" role="tablist" aria-label="Slide navigation"></div>
-  <span id="slide-counter">01 / 13</span>
-</div>
-
-<button class="arrow-btn" id="btn-prev" aria-label="Previous slide">&#8592;</button>
+<button class="arrow-btn" id="btn-prev" aria-label="Previous slide" disabled>&#8592;</button>
 <button class="arrow-btn" id="btn-next" aria-label="Next slide">&#8594;</button>
+<div id="dot-nav" role="tablist" aria-label="Slide navigation"></div>
+<div class="sr-only" aria-live="polite" id="sr-live"></div>
 
+<!-- ── VIEWER ──────────────────────────────────────── -->
 <div id="viewer" role="region" aria-label="Presentation slides">
-  <div aria-live="polite" aria-atomic="true" class="sr-only" id="sr-live"></div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 1 — Welcome
-  ════════════════════════════════════════════════════ -->
-  <div class="slide active" data-index="0" data-title="Welcome" aria-label="Slide 1: Welcome">
+  <!-- SLIDE 1 — Welcome -->
+  <div class="slide active" data-index="0" data-title="Welcome">
     <div class="s-inner">
       <div class="s-body-split-40">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;">
-          <span class="eyebrow">StoneSystems</span>
-          <div class="display-xl">Welcome.<br>Let's get you<br>growing.</div>
-          <div class="rule copper" style="width:40px;margin:20px 0;"></div>
-          <p class="body">I'm your dedicated Customer Success Manager. My job is making sure you get your money's worth — every month.</p>
+          <span class="eyebrow anim">StoneSystems</span>
+          <div class="display-xl anim">Welcome.<br>Let's get you<br>growing.</div>
+          <hr class="rule copper anim" style="width:40px;border:none;height:1px;margin:20px 0;">
+          <p class="body anim">I'm your dedicated Customer Success Manager. My job is making sure you get your money's worth — every month.</p>
         </div>
-        <!-- RIGHT -->
         <div class="s-col" style="justify-content:center;">
-          <div class="contact-card">
+          <div class="contact-card anim">
             <div class="h2">Ryan Christmas</div>
             <div class="caption">Customer Success Manager · StoneSystems</div>
-            <div class="rule" style="margin:4px 0;"></div>
+            <hr class="rule" style="margin:4px 0;">
             <div class="contact-row"><span class="contact-icon">📞</span><a href="tel:+16692266071">1-669-226-6071</a></div>
             <div class="contact-row"><span class="contact-icon">✉️</span><a href="mailto:ryan@stonesystems.io">ryan@stonesystems.io</a></div>
             <div class="contact-row"><span class="contact-icon">🔗</span><a href="https://stonesystems.io/support/ryan" target="_blank">stonesystems.io/support/ryan</a></div>
@@ -828,50 +457,33 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 2 — Agenda
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="1" data-title="Today's Agenda" aria-label="Slide 2: Today's Agenda" aria-hidden="true">
-    <div class="s-inner" style="align-items:center;justify-content:center;">
+  <!-- SLIDE 2 — Agenda -->
+  <div class="slide" data-index="1" data-title="Today's Agenda">
+    <div class="s-inner" style="justify-content:center;flex:1;">
       <div class="centered-left">
-        <span class="eyebrow">What we're covering today</span>
-        <div class="display-lg" style="margin-bottom:32px;">Four things.</div>
+        <span class="eyebrow anim">What we're covering today</span>
+        <div class="display-lg anim" style="margin-bottom:28px;">Four things.</div>
         <ol class="agenda-list">
-          <li class="agenda-item">
-            <span class="agenda-num">01</span>
-            <span class="agenda-text">How we'll make you more money</span>
-          </li>
-          <li class="agenda-item">
-            <span class="agenda-num">02</span>
-            <span class="agenda-text">Timeline &amp; when you'll see results</span>
-          </li>
-          <li class="agenda-item">
-            <span class="agenda-num">03</span>
-            <span class="agenda-text">What we need from you</span>
-          </li>
-          <li class="agenda-item">
-            <span class="agenda-num">04</span>
-            <span class="agenda-text">The boring tech setup</span>
-          </li>
+          <li class="agenda-item"><span class="agenda-num">01</span><span class="agenda-text">How we'll make you more money</span></li>
+          <li class="agenda-item"><span class="agenda-num">02</span><span class="agenda-text">Timeline &amp; when you'll see results</span></li>
+          <li class="agenda-item"><span class="agenda-num">03</span><span class="agenda-text">What we need from you</span></li>
+          <li class="agenda-item"><span class="agenda-num">04</span><span class="agenda-text">The boring tech setup</span></li>
         </ol>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 3 — Functional Website
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="2" data-title="1 — Functional Website" aria-label="Slide 3: Functional Website" aria-hidden="true">
+  <!-- SLIDE 3 — Functional Website -->
+  <div class="slide" data-index="2" data-title="1 — Functional Website">
     <div class="s-inner">
       <div class="s-body-split-40">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">How We'll Make You More Money</span>
-          <div class="display-md" style="margin-bottom:10px;">1. A Website That<br>Actually Works For You</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">Four conversion paths, Google-optimized, with instant lead follow-up — on day one.</p>
+          <span class="eyebrow anim">How We'll Make You More Money</span>
+          <div class="display-md anim" style="margin-bottom:10px;">1. A Website That<br>Actually Works For You</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">Four conversion paths, Google-optimized, with instant lead follow-up — on day one.</p>
           <div class="spacer-auto"></div>
-          <div class="list-label">WITH STONESYSTEMS</div>
+          <div class="list-label anim">WITH STONESYSTEMS</div>
           <ul class="check-list">
             <li><span class="list-icon" style="color:var(--green);">✓</span>4 ways for clients to contact you</li>
             <li><span class="list-icon" style="color:var(--green);">✓</span>Looks professional — builds trust instantly</li>
@@ -879,180 +491,142 @@
             <li><span class="list-icon" style="color:var(--green);">✓</span>Instant SMS follow-up on every new lead</li>
           </ul>
           <div class="spacer-12"></div>
-          <div class="list-label red">WITHOUT US</div>
+          <div class="list-label red anim">WITHOUT US</div>
           <ul class="cross-list">
             <li><span class="list-icon" style="color:var(--red);opacity:0.6;">✗</span>Can't be contacted = lost jobs</li>
             <li><span class="list-icon" style="color:var(--red);opacity:0.6;">✗</span>Looks unprofessional = no trust</li>
             <li><span class="list-icon" style="color:var(--red);opacity:0.6;">✗</span>Invisible on Google</li>
           </ul>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;min-height:300px;">
-          <div class="screen-frame" style="max-height:clamp(280px,50vh,460px);">
+        <div class="s-col" style="justify-content:center;">
+          <div class="screen-frame anim">
             <div class="screen-frame-bar">
               <div class="screen-dot" style="background:#ff5f57;"></div>
               <div class="screen-dot" style="background:#febc2e;"></div>
               <div class="screen-dot" style="background:#28c840;"></div>
             </div>
-            <img
-              loading="eager" src="./images/onboarding/website.png"
-              alt="A website that actually works for you — with annotated conversion points"
-              style="width:100%;object-fit:contain;object-position:center;flex:1;min-height:0;"
-              
-            >
+            <img loading="eager" src="./images/onboarding/website.png" alt="A website that works — with conversion points">
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 4 — Missed Call Text Back
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="3" data-title="2 — Missed Call Text Back" aria-label="Slide 4: Missed Call Text Back" aria-hidden="true">
+  <!-- SLIDE 4 — Missed Call Text Back -->
+  <div class="slide" data-index="3" data-title="2 — Missed Call Text Back">
     <div class="s-inner">
       <div class="s-body-split-40">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">How We'll Make You More Money</span>
-          <div class="display-md" style="margin-bottom:10px;">2. Never Lose a Lead<br>to a Missed Call</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">When a call goes unanswered, most businesses lose that lead forever. We fire an automatic text back within seconds — keeping that client warm until you can answer.</p>
+          <span class="eyebrow anim">How We'll Make You More Money</span>
+          <div class="display-md anim" style="margin-bottom:10px;">2. Never Lose a Lead<br>to a Missed Call</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">When a call goes unanswered, most businesses lose that lead forever. We fire an automatic text back within seconds — keeping that client warm until you can answer.</p>
           <div class="spacer-auto"></div>
-          <div class="result-bar" style="margin:0;">
+          <div class="result-bar anim">
             <span class="eyebrow" style="margin:0;white-space:nowrap;">Result:</span>
             <p class="body" style="color:var(--t1);margin:0;">Businesses using auto-text-back recover up to <strong style="color:var(--copper);">40% more leads</strong> — without lifting a finger.</p>
           </div>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;min-height:300px;">
-          <div class="img-card">
-            <img
-              loading="eager" src="./images/onboarding/missed-call.png"
-              alt="Missed call text back flow: missed call → auto text → lead saved"
-            >
+        <div class="s-col" style="justify-content:center;">
+          <div class="img-card anim">
+            <img loading="eager" src="./images/onboarding/missed-call.png" alt="Missed call text back flow">
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 5 — A2P Compliance (The Boring Tech)
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="4" data-title="A2P Compliance" aria-label="Slide 5: A2P Compliance" aria-hidden="true">
+  <!-- SLIDE 5 — A2P Compliance -->
+  <div class="slide" data-index="4" data-title="A2P Compliance">
     <div class="s-inner">
       <div class="s-body-split-40">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">The Boring Tech Setup</span>
-          <div class="display-md" style="margin-bottom:10px;">Why We Need<br>Your EIN.</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">To make the auto-text-back feature work, we must register your business with mobile carriers (AT&T, Verizon, etc.).</p>
+          <span class="eyebrow anim">The Boring Tech Setup</span>
+          <div class="display-md anim" style="margin-bottom:10px;">Why We Need<br>Your EIN.</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">To make the auto-text-back feature work, we must register your business with mobile carriers (AT&amp;T, Verizon, etc.).</p>
           <div class="spacer-auto"></div>
-          <div class="list-label">A2P 10DLC REGISTRATION</div>
+          <div class="list-label anim">A2P 10DLC REGISTRATION</div>
           <ul class="check-list">
             <li><span class="list-icon" style="color:var(--green);">✓</span><strong>Legal Requirement:</strong> Federal law requires businesses to prove they aren't spammers.</li>
             <li><span class="list-icon" style="color:var(--green);">✓</span><strong>The Requirement:</strong> We need your exact Legal Business Name and EIN matching your tax documents.</li>
-            <li><span class="list-icon" style="color:var(--green);">✓</span><strong>The Timeline:</strong> Carrier & Signalhouse approval takes <strong>7–10 days</strong> on average.</li>
+            <li><span class="list-icon" style="color:var(--green);">✓</span><strong>The Timeline:</strong> Carrier &amp; Signalhouse approval takes <strong>7–10 days</strong> on average.</li>
           </ul>
           <div class="spacer-8"></div>
-          <span class="tag accent">Prevents texts from being blocked</span>
+          <span class="tag accent anim">Prevents texts from being blocked</span>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;min-height:300px;">
-           <div class="deco-block" style="background:rgba(122,181,204,0.05);border-color:rgba(122,181,204,0.2);padding:24px;justify-content:center;">
-            <div class="list-label" style="color:var(--steel);margin-bottom:20px;">Approval Roadmap</div>
-            <ul class="need-list" style="gap:12px;">
-              <li class="need-item" style="background:rgba(255,255,255,0.03);border-color:var(--divider);">
+        <div class="s-col" style="justify-content:center;">
+          <div class="deco-block anim" style="background:rgba(122,181,204,0.04);border-color:rgba(122,181,204,0.18);">
+            <div class="list-label" style="color:var(--steel);margin-bottom:16px;">Approval Roadmap</div>
+            <ul class="need-list">
+              <li class="need-item" style="border-color:rgba(122,181,204,0.15);">
                 <span class="need-icon" style="color:var(--steel);">01</span>
-                <div>
-                  <div class="need-text">Brand Identity</div>
-                  <div class="need-note">Legal Name + EIN Submission</div>
-                </div>
+                <div><div class="need-text">Brand Identity</div><div class="need-note">Legal Name + EIN Submission</div></div>
               </li>
-              <li class="need-item" style="background:rgba(196,144,106,0.05);border-color:var(--copper-border);">
+              <li class="need-item" style="border-color:var(--copper-border);">
                 <span class="need-icon" style="color:var(--copper);">🕒</span>
-                <div>
-                  <div class="need-text">Carrier Review</div>
-                  <div class="need-note">7–10 day manual vetting period</div>
-                </div>
+                <div><div class="need-text">Carrier Review</div><div class="need-note">7–10 day manual vetting period</div></div>
               </li>
-              <li class="need-item" style="background:rgba(114,181,138,0.05);border-color:rgba(114,181,138,0.2);">
+              <li class="need-item" style="border-color:rgba(114,181,138,0.2);">
                 <span class="need-icon" style="color:var(--green);">✓</span>
-                <div>
-                  <div class="need-text">Verified Status</div>
-                  <div class="need-note">100% Deliverability Active</div>
-                </div>
+                <div><div class="need-text">Verified Status</div><div class="need-note">100% Deliverability Active</div></div>
               </li>
             </ul>
-            <div class="rule copper" style="opacity:0.15;margin:20px 0;"></div>
-            <p class="caption" style="text-align:center;line-height:1.4;color:var(--t2);">This is the single biggest "bottleneck" in setup. We submit your data the moment you provide it to start the clock.</p>
+            <hr class="rule" style="opacity:0.3;">
+            <p class="caption" style="text-align:center;line-height:1.5;">This is the single biggest bottleneck in setup. We submit your data the moment you provide it to start the clock.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 6 — Google Business Profile
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="5" data-title="3 — Google Profile" aria-label="Slide 6: Google Business Profile" aria-hidden="true">
+  <!-- SLIDE 6 — Google Business Profile -->
+  <div class="slide" data-index="5" data-title="3 — Google Profile">
     <div class="s-inner">
       <div class="s-body-split-40">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">How We'll Make You More Money</span>
-          <div class="display-md" style="margin-bottom:10px;">3. Your Google Profile,<br>Optimized</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">Most local businesses are invisible on Google Maps. We fix that.</p>
+          <span class="eyebrow anim">How We'll Make You More Money</span>
+          <div class="display-md anim" style="margin-bottom:10px;">3. Your Google Profile,<br>Optimized</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">Most local businesses are invisible on Google Maps. We fix that.</p>
           <div class="spacer-auto"></div>
-          <div class="list-label">WITH STONESYSTEMS</div>
+          <div class="list-label anim">WITH STONESYSTEMS</div>
           <ul class="check-list">
             <li><span class="list-icon" style="color:var(--green);">✓</span>Reviews that build local trust</li>
             <li><span class="list-icon" style="color:var(--green);">✓</span>Show up when people search near them</li>
             <li><span class="list-icon" style="color:var(--green);">✓</span>More clicks to your website</li>
           </ul>
           <div class="spacer-12"></div>
-          <div class="list-label red">WITHOUT US</div>
+          <div class="list-label red anim">WITHOUT US</div>
           <ul class="cross-list">
             <li><span class="list-icon" style="color:var(--red);opacity:0.6;">✗</span>No one trusts you — no reviews</li>
             <li><span class="list-icon" style="color:var(--red);opacity:0.6;">✗</span>Invisible in local search</li>
             <li><span class="list-icon" style="color:var(--red);opacity:0.6;">✗</span>Competitors take your leads</li>
           </ul>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;min-height:300px;">
-          <div class="screen-frame" style="max-height:clamp(280px,50vh,460px);">
+        <div class="s-col" style="justify-content:center;">
+          <div class="screen-frame anim">
             <div class="screen-frame-bar">
               <div class="screen-dot" style="background:#ff5f57;"></div>
               <div class="screen-dot" style="background:#febc2e;"></div>
               <div class="screen-dot" style="background:#28c840;"></div>
             </div>
-            <img
-              loading="eager" src="./images/onboarding/google-profile.png"
-              alt="Google Business Profile — optimized with reviews and ranking signals"
-              style="width:100%;object-fit:contain;object-position:center;flex:1;min-height:0;"
-              
-            >
+            <img loading="eager" src="./images/onboarding/google-profile.png" alt="Optimized Google Business Profile">
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 7 — Back Office CRM
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="6" data-title="4 — Your Back Office" aria-label="Slide 7: Back Office CRM" aria-hidden="true">
+  <!-- SLIDE 7 — Back Office CRM -->
+  <div class="slide" data-index="6" data-title="4 — Your Back Office">
     <div class="s-inner">
       <div class="s-body-split">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">How We'll Make You More Money</span>
-          <div class="display-md" style="margin-bottom:10px;">4. Your Business, Run<br>From One Place</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">No more sticky notes. No more spreadsheets. No more lost follow-ups.</p>
+          <span class="eyebrow anim">How We'll Make You More Money</span>
+          <div class="display-md anim" style="margin-bottom:10px;">4. Your Business, Run<br>From One Place</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">No more sticky notes. No more spreadsheets. No more lost follow-ups.</p>
           <div class="spacer-auto"></div>
           <ul class="check-list">
             <li><span class="list-icon" style="color:var(--green);">✓</span>All leads and clients in one dashboard</li>
@@ -1061,67 +635,57 @@
             <li><span class="list-icon" style="color:var(--green);">✓</span>Replace your current CRM — at no extra cost</li>
           </ul>
           <div class="spacer-8"></div>
-          <span class="tag accent">No extra cost</span>
+          <span class="tag accent anim">No extra cost</span>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;min-height:300px;">
-          <div class="screen-frame" style="max-height:clamp(280px,50vh,460px);">
+        <div class="s-col" style="justify-content:center;">
+          <div class="screen-frame anim">
             <div class="screen-frame-bar">
               <div class="screen-dot" style="background:#ff5f57;"></div>
               <div class="screen-dot" style="background:#febc2e;"></div>
               <div class="screen-dot" style="background:#28c840;"></div>
             </div>
-            <img
-              loading="eager" src="./images/onboarding/business-one-place.png"
-              alt="StoneSystems GHL Launchpad — all your business tools in one dashboard"
-              style="width:100%;object-fit:contain;object-position:center;flex:1;min-height:0;"
-              
-            >
+            <img loading="eager" src="./images/onboarding/business-one-place.png" alt="GHL back office dashboard">
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 8 — Timeline
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="7" data-title="Timeline" aria-label="Slide 8: Timeline" aria-hidden="true">
-    <div class="s-inner" style="align-items:center;justify-content:center;text-align:center;">
-      <span class="eyebrow">Timeline &amp; When You'll See Results</span>
-      <div class="display-lg">14 days to live.<br>Growth in months.</div>
-      <hr class="rule copper" style="width:60px;border:none;height:1px;margin:24px auto;">
-      <div class="stat-row" style="width:100%;max-width:680px;">
-        <div class="stat-box">
-          <div class="stat-number" style="color:var(--copper);">14</div>
-          <div class="stat-label">days to go live</div>
+  <!-- SLIDE 8 — Timeline -->
+  <div class="slide" data-index="7" data-title="Timeline">
+    <div class="s-inner">
+      <div class="centered" style="flex:1;">
+        <span class="eyebrow anim">Timeline &amp; When You'll See Results</span>
+        <div class="display-lg anim">14 days to live.<br>Growth in months.</div>
+        <hr class="rule copper anim" style="width:60px;border:none;height:1px;margin:24px auto;">
+        <div class="stat-row anim" style="width:100%;max-width:680px;">
+          <div class="stat-box">
+            <div class="stat-number" style="color:var(--copper);">14</div>
+            <div class="stat-label">days to go live</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" style="color:var(--steel);">1–3</div>
+            <div class="stat-label">months, foundation built</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-number" style="color:var(--t1);">3–6</div>
+            <div class="stat-label">months, growth phase</div>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-number" style="color:var(--steel);">1–3</div>
-          <div class="stat-label">months, foundation built</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-number" style="color:var(--t1);">3–6</div>
-          <div class="stat-label">months, growth phase</div>
-        </div>
+        <p class="body anim" style="max-width:560px;text-align:center;">Every system we build is designed to produce results as fast as Google allows. Some clients see lift in month one. Some in month six. We control execution — you control effort.</p>
       </div>
-      <p class="body" style="max-width:560px;text-align:center;">Every system we build is designed to produce results as fast as Google allows. Some clients see lift in month one. Some in month six. We control execution — you control effort.</p>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 9 — Client Journey
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="8" data-title="Client Journey" aria-label="Slide 9: Client Journey" aria-hidden="true">
+  <!-- SLIDE 9 — Client Journey -->
+  <div class="slide" data-index="8" data-title="Client Journey">
     <div class="s-inner">
       <div class="s-header">
-        <span class="eyebrow">Stone Systems</span>
-        <div class="display-md">Your Client Journey</div>
+        <span class="eyebrow anim">Stone Systems</span>
+        <div class="display-md anim">Your Client Journey</div>
       </div>
       <div class="timeline-container">
-        <!-- Steps row: day labels + circles + name + desc — laid out as top labels, circles, bottom labels -->
         <div style="display:flex;flex-direction:column;gap:0;flex:1;justify-content:center;">
-          <!-- Top labels (day) -->
           <div class="timeline-steps" style="margin-bottom:10px;">
             <div class="tl-step"><div class="tl-day" style="color:var(--steel);">Day 1</div></div>
             <div class="tl-step"><div class="tl-day" style="color:#f97316;">Day 7</div></div>
@@ -1129,118 +693,62 @@
             <div class="tl-step"><div class="tl-day" style="color:#eab308;">Months 1–3</div></div>
             <div class="tl-step"><div class="tl-day" style="color:#7c3aed;">Months 3–6</div></div>
           </div>
-          <!-- Circles row -->
-          <div class="timeline-steps" style="position:relative;">
-            <div class="tl-step">
-              <div class="tl-circle" style="border-color:var(--steel);">📞</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-circle" style="border-color:#f97316;">⚙️</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-circle" style="border-color:var(--green);">🚀</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-circle" style="border-color:#eab308;">🧱</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-circle" style="border-color:#7c3aed;">📈</div>
-            </div>
+          <div class="timeline-steps">
+            <div class="tl-step"><div class="tl-circle" style="border-color:var(--steel);">📞</div></div>
+            <div class="tl-step"><div class="tl-circle" style="border-color:#f97316;">⚙️</div></div>
+            <div class="tl-step"><div class="tl-circle" style="border-color:var(--green);">🚀</div></div>
+            <div class="tl-step"><div class="tl-circle" style="border-color:#eab308;">🧱</div></div>
+            <div class="tl-step"><div class="tl-circle" style="border-color:#7c3aed;">📈</div></div>
           </div>
-          <!-- Track -->
           <div class="timeline-track-row" style="margin:10px clamp(20px,4vw,50px);">
             <div class="timeline-track-fill"></div>
           </div>
-          <!-- Bottom labels (name + desc) -->
           <div class="timeline-steps" style="margin-top:10px;">
-            <div class="tl-step">
-              <div class="tl-name">Onboarding Call</div>
-              <div class="tl-desc">The Kickoff</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-name">Systems Call</div>
-              <div class="tl-desc">Integration &amp; Review</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-name">Launch Call</div>
-              <div class="tl-desc">Go Live &amp; Handoff</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-name">Foundation</div>
-              <div class="tl-desc">Building Trust</div>
-            </div>
-            <div class="tl-step">
-              <div class="tl-name">Growth Phase</div>
-              <div class="tl-desc">SEO &amp; LSA</div>
-            </div>
+            <div class="tl-step"><div class="tl-name">Onboarding Call</div><div class="tl-desc">The Kickoff</div></div>
+            <div class="tl-step"><div class="tl-name">Systems Call</div><div class="tl-desc">Integration &amp; Review</div></div>
+            <div class="tl-step"><div class="tl-name">Launch Call</div><div class="tl-desc">Go Live &amp; Handoff</div></div>
+            <div class="tl-step"><div class="tl-name">Foundation</div><div class="tl-desc">Building Trust</div></div>
+            <div class="tl-step"><div class="tl-name">Growth Phase</div><div class="tl-desc">SEO &amp; LSA</div></div>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 10 — Q&A
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="9" data-title="Questions?" aria-label="Slide 10: Questions" aria-hidden="true">
-    <div class="s-inner" style="align-items:center;justify-content:center;text-align:center;">
-      <span class="eyebrow">Take a moment</span>
-      <div class="display-xl">What questions<br>do you have?</div>
-      <hr class="rule copper" style="width:80px;border:none;height:1px;margin:28px auto;">
-      <p class="body" style="max-width:480px;text-align:center;">This is your call. We're here to make sure you leave with complete clarity on next steps, timelines, and exactly what to expect.</p>
-      <div class="spacer-20"></div>
-      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
-        <span class="chip">📞 1-669-226-6071</span>
-        <a href="https://stonesystems.io/support/ryan" target="_blank" class="chip">🔗 stonesystems.io/support/ryan</a>
+  <!-- SLIDE 10 — Q&A -->
+  <div class="slide" data-index="9" data-title="Questions?">
+    <div class="s-inner">
+      <div class="centered" style="flex:1;">
+        <span class="eyebrow anim">Take a moment</span>
+        <div class="display-xl anim">What questions<br>do you have?</div>
+        <hr class="rule copper anim" style="width:80px;border:none;height:1px;margin:28px auto;">
+        <p class="body anim" style="max-width:480px;text-align:center;">This is your call. We're here to make sure you leave with complete clarity on next steps, timelines, and exactly what to expect.</p>
+        <div class="spacer-20"></div>
+        <div class="anim" style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+          <span class="chip">📞 1-669-226-6071</span>
+          <a href="https://stonesystems.io/support/ryan" target="_blank" class="chip">🔗 stonesystems.io/support/ryan</a>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 11 — What We Need From You
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="10" data-title="What We Need From You" aria-label="Slide 11: What We Need From You" aria-hidden="true">
+  <!-- SLIDE 11 — What We Need From You -->
+  <div class="slide" data-index="10" data-title="What We Need From You">
     <div class="s-inner">
       <div class="s-body-split">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">Before We Can Begin</span>
-          <div class="display-md" style="margin-bottom:0;">Four things.<br>That's it.</div>
+          <span class="eyebrow anim">Before We Can Begin</span>
+          <div class="display-md anim" style="margin-bottom:0;">Four things.<br>That's it.</div>
           <div class="spacer-16"></div>
           <ul class="need-list">
-            <li class="need-item">
-              <span class="need-icon">📋</span>
-              <div>
-                <div class="need-text">A list of your past clients</div>
-                <div class="need-note">Used to jumpstart your review campaign</div>
-              </div>
-            </li>
-            <li class="need-item">
-              <span class="need-icon">🌐</span>
-              <div>
-                <div class="need-text">Access to your domain</div>
-                <div class="need-note">If you have one — we'll set up the subdomain</div>
-              </div>
-            </li>
-            <li class="need-item">
-              <span class="need-icon">📍</span>
-              <div>
-                <div class="need-text">Access to your Google Business Profile</div>
-                <div class="need-note">If you have one — we'll optimize it</div>
-              </div>
-            </li>
-            <li class="need-item">
-              <span class="need-icon">📝</span>
-              <div>
-                <div class="need-text">Completed onboarding form</div>
-                <div class="need-note">The intake form we sent you after signing</div>
-              </div>
-            </li>
+            <li class="need-item"><span class="need-icon">📋</span><div><div class="need-text">A list of your past clients</div><div class="need-note">Used to jumpstart your review campaign</div></div></li>
+            <li class="need-item"><span class="need-icon">🌐</span><div><div class="need-text">Access to your domain</div><div class="need-note">If you have one — we'll set up the subdomain</div></div></li>
+            <li class="need-item"><span class="need-icon">📍</span><div><div class="need-text">Access to your Google Business Profile</div><div class="need-note">If you have one — we'll optimize it</div></div></li>
+            <li class="need-item"><span class="need-icon">📝</span><div><div class="need-text">Completed onboarding form</div><div class="need-note">The intake form we sent you after signing</div></div></li>
           </ul>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;min-height:260px;">
-          <div class="deco-block">
+        <div class="s-col" style="justify-content:center;">
+          <div class="deco-block anim">
             <span class="tag accent">Checklist</span>
             <div class="display-lg" style="font-size:clamp(3rem,5vw,6rem);color:var(--copper);opacity:0.15;line-height:1;text-align:center;padding:20px 0;">4</div>
             <p class="body">The faster you can get us these, the faster we can get you live.</p>
@@ -1250,18 +758,15 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 12 — GBP Optimization Upsell
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="11" data-title="Ryan Recommends" aria-label="Slide 12: Ryan Recommends" aria-hidden="true">
+  <!-- SLIDE 12 — Ryan Recommends -->
+  <div class="slide" data-index="11" data-title="Ryan Recommends">
     <div class="s-inner">
       <div class="s-body-split">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">Ryan Recommends</span>
-          <div class="display-md" style="margin-bottom:10px;">GBP Optimization<br>Done Right.</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">Most Google Business Profiles are set up wrong. We configure yours exactly the way Google's algorithm rewards — so you show up first.</p>
+          <span class="eyebrow anim">Ryan Recommends</span>
+          <div class="display-md anim" style="margin-bottom:10px;">GBP Optimization<br>Done Right.</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">Most Google Business Profiles are set up wrong. We configure yours exactly the way Google's algorithm rewards — so you show up first.</p>
           <div class="spacer-12"></div>
           <ul class="check-list">
             <li><span class="list-icon" style="color:var(--green);">✓</span>Optimized exactly how Google likes it</li>
@@ -1269,17 +774,14 @@
             <li><span class="list-icon" style="color:var(--green);">✓</span>Faster trust-building through reviews</li>
           </ul>
         </div>
-        <!-- RIGHT -->
         <div class="s-col" style="justify-content:center;">
-          <div class="price-cards">
-            <!-- Standard card -->
+          <div class="price-cards anim">
             <div class="price-card">
               <div class="price-label-sm">Standard Rate</div>
               <div class="price-amount">$500</div>
               <div class="price-desc">One-time optimization fee</div>
               <div class="price-strike">Regular price</div>
             </div>
-            <!-- Featured card -->
             <div class="price-card featured">
               <div class="price-label-sm">Switch to Quarterly</div>
               <div class="price-amount">$250</div>
@@ -1292,51 +794,35 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 13 — Response Times
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="12" data-title="Response Times" aria-label="Slide 13: Response Times" aria-hidden="true">
+  <!-- SLIDE 13 — Response Times -->
+  <div class="slide" data-index="12" data-title="Response Times">
     <div class="s-inner">
       <div class="s-body-split">
-        <!-- LEFT -->
         <div class="s-col" style="justify-content:center;gap:0;">
-          <span class="eyebrow">How Quickly I'll Get Back to You</span>
-          <div class="display-md" style="margin-bottom:10px;">Fast on the things<br>that matter.</div>
-          <div class="rule copper" style="width:32px;"></div>
-          <p class="body" style="margin:8px 0 0;">I'm in calls most of the day — but your business never waits for a response.</p>
+          <span class="eyebrow anim">How Quickly I'll Get Back to You</span>
+          <div class="display-md anim" style="margin-bottom:10px;">Fast on the things<br>that matter.</div>
+          <hr class="rule copper anim" style="width:32px;border:none;height:1px;">
+          <p class="body anim">I'm in calls most of the day — but your business never waits for a response.</p>
           <div class="spacer-12"></div>
           <p class="body" style="font-size:0.8rem;">Available Monday – Friday</p>
           <p class="body" style="font-size:0.8rem;">For calls, book at stonesystems.io/support/ryan</p>
         </div>
-        <!-- RIGHT -->
-        <div class="s-col" style="justify-content:center;gap:0;">
-          <div class="resp-list">
+        <div class="s-col" style="justify-content:center;">
+          <div class="resp-list anim">
             <div class="resp-item">
-              <div class="resp-header">
-                <span class="resp-label">Messages &amp; Email</span>
-                <span class="resp-time">≤ 24h</span>
-              </div>
+              <div class="resp-header"><span class="resp-label">Messages &amp; Email</span><span class="resp-time">≤ 24h</span></div>
               <div class="resp-bar-track"><div class="resp-bar-fill" style="width:35%;"></div></div>
             </div>
             <div class="resp-item">
-              <div class="resp-header">
-                <span class="resp-label">Website Revisions</span>
-                <span class="resp-time">2–3 days</span>
-              </div>
+              <div class="resp-header"><span class="resp-label">Website Revisions</span><span class="resp-time">2–3 days</span></div>
               <div class="resp-bar-track"><div class="resp-bar-fill" style="width:55%;"></div></div>
             </div>
             <div class="resp-item">
-              <div class="resp-header">
-                <span class="resp-label">Support Calls</span>
-                <span class="resp-time">Scheduled</span>
-              </div>
+              <div class="resp-header"><span class="resp-label">Support Calls</span><span class="resp-time">Scheduled</span></div>
               <div class="resp-bar-track"><div class="resp-bar-fill" style="width:20%;"></div></div>
             </div>
             <div class="resp-item">
-              <div class="resp-header">
-                <span class="resp-label">Emergency Issues</span>
-                <span class="resp-time">Same day</span>
-              </div>
+              <div class="resp-header"><span class="resp-label">Emergency Issues</span><span class="resp-time">Same day</span></div>
               <div class="resp-bar-track"><div class="resp-bar-fill" style="width:15%;"></div></div>
             </div>
           </div>
@@ -1347,263 +833,155 @@
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════
-       SLIDE 14 — Final CTA
-  ════════════════════════════════════════════════════ -->
-  <div class="slide" data-index="13" data-title="Let's Book Your Systems Call" aria-label="Slide 14: Let's Book Your Systems Call" aria-hidden="true">
-    <div class="s-inner" style="align-items:center;justify-content:center;text-align:center;">
-      <span class="eyebrow">Your Next Step</span>
-      <div class="display-xl">Let's book your<br><em>systems call.</em></div>
-      <hr class="rule copper" style="width:60px;border:none;height:1px;margin:28px auto;">
-      <p class="body" style="max-width:480px;text-align:center;">Day 7: we'll integrate everything, review your setup, and make sure you're ready to go live on Day 14.</p>
-      <div class="spacer-20"></div>
-      <a href="https://stonesystems.io/support/ryan" target="_blank" class="cta-btn">📅 Book Your Systems Call →</a>
-      <div class="spacer-16"></div>
-      <span class="tag">BONUS — First client to book gets priority onboarding</span>
+  <!-- SLIDE 14 — Final CTA -->
+  <div class="slide" data-index="13" data-title="Book Your Systems Call">
+    <div class="s-inner">
+      <div class="centered" style="flex:1;">
+        <span class="eyebrow anim">Your Next Step</span>
+        <div class="display-xl anim">Let's book your<br><em>systems call.</em></div>
+        <hr class="rule copper anim" style="width:60px;border:none;height:1px;margin:28px auto;">
+        <p class="body anim" style="max-width:480px;text-align:center;">Day 7: we'll integrate everything, review your setup, and make sure you're ready to go live on Day 14.</p>
+        <div class="spacer-20"></div>
+        <a href="https://stonesystems.io/support/ryan" target="_blank" class="cta-btn anim">📅 Book Your Systems Call →</a>
+        <div class="spacer-16"></div>
+        <span class="tag anim">BONUS — First client to book gets priority onboarding</span>
+      </div>
     </div>
   </div>
 
 </div><!-- /viewer -->
 
-<script type="module">
-  // Motion.dev with graceful fallback if CDN fails
-  let animate, stagger;
-  try {
-    const mod = await import("https://cdn.jsdelivr.net/npm/motion@11.11.13/+esm");
-    animate = mod.animate;
-    stagger = mod.stagger;
-  } catch(e) {
-    // Fallback: simple CSS transition-based animator
-    animate = (els, props, opts) => {
-      const items = els.length ? Array.from(els) : [els];
-      const delay = opts?.delay ?? 0;
-      items.forEach((el, i) => {
-        const d = typeof delay === 'function' ? delay(i) : (delay * i || 0);
-        setTimeout(() => {
-          el.style.transition = `opacity 0.5s ease, transform 0.5s ease`;
-          if (props.opacity !== undefined) el.style.opacity = props.opacity;
-          if (props.transform !== undefined) el.style.transform = props.transform;
-        }, d * 1000);
-      });
-    };
-    stagger = (t) => (i) => t * i;
-  }
-
+<script>
   (function() {
     'use strict';
 
-    const LOOP = false;
     const TOTAL = 14;
-
     const slides = Array.from(document.querySelectorAll('.slide'));
-    const SLIDE_NAMES = slides.map(s => s.dataset.title || '');
+    const NAMES  = slides.map(s => s.dataset.title || '');
 
-    const progressFill  = document.getElementById('progress-fill');
-    const slideCounter  = document.getElementById('slide-counter');
-    const slideNameEl   = document.getElementById('slide-name-chrome');
-    const dotNav        = document.getElementById('dot-nav');
-    const btnPrev       = document.getElementById('btn-prev');
-    const btnNext       = document.getElementById('btn-next');
-    const btnFs         = document.getElementById('btn-fs');
-    const srLive        = document.getElementById('sr-live');
+    const progressFill = document.getElementById('progress-fill');
+    const counter      = document.getElementById('slide-counter');
+    const chromeName   = document.getElementById('chrome-name');
+    const dotNav       = document.getElementById('dot-nav');
+    const btnPrev      = document.getElementById('btn-prev');
+    const btnNext      = document.getElementById('btn-next');
+    const btnFs        = document.getElementById('btn-fs');
+    const srLive       = document.getElementById('sr-live');
 
-    let current = 0;
-    let isAnimating = false;
+    let current    = 0;
+    let busy       = false;
 
-    // ── BUILD DOTS ───────────────────────────────────
+    // Build dots
     slides.forEach((_, i) => {
       const dot = document.createElement('button');
       dot.className = 'dot' + (i === 0 ? ' active' : '');
       dot.setAttribute('role', 'tab');
-      dot.setAttribute('aria-label', 'Go to slide ' + (i + 1) + ': ' + SLIDE_NAMES[i]);
+      dot.setAttribute('aria-label', 'Slide ' + (i+1) + ': ' + NAMES[i]);
       dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
       dot.addEventListener('click', () => goTo(i));
       dotNav.appendChild(dot);
     });
 
-    function getDots() { return Array.from(dotNav.querySelectorAll('.dot')); }
+    function getDots() { return dotNav.querySelectorAll('.dot'); }
 
-    // ── GO TO ────────────────────────────────────────
-    function goTo(n, pushState = true) {
-      if (n === current && slides[n].classList.contains('active')) return;
+    function updateChrome(n) {
+      counter.textContent   = String(n+1).padStart(2,'0') + ' / ' + String(TOTAL).padStart(2,'0');
+      chromeName.textContent = NAMES[n] || '';
+      progressFill.style.width = (TOTAL <= 1 ? 100 : (n / (TOTAL-1)) * 100) + '%';
+      btnPrev.disabled = n === 0;
+      btnNext.disabled = n === TOTAL - 1;
+      srLive.textContent = 'Slide ' + (n+1) + ' of ' + TOTAL + ': ' + NAMES[n];
+      const dots = getDots();
+      dots.forEach((d, i) => {
+        d.classList.toggle('active', i === n);
+        d.setAttribute('aria-selected', i === n ? 'true' : 'false');
+      });
+    }
+
+    function goTo(n, push) {
+      if (push === undefined) push = true;
+      if (n === current || busy) return;
       if (n < 0 || n >= TOTAL) return;
-      if (isAnimating) return;
-      isAnimating = true;
 
+      busy = true;
       const prev = current;
       current = n;
 
-      // Classes
+      // Fade out old
       slides[prev].classList.remove('active');
       slides[prev].setAttribute('aria-hidden', 'true');
+
+      // Force reflow so CSS animation restarts on new slide
+      slides[n].classList.remove('active');
+      void slides[n].offsetWidth; // reflow
+
+      // Fade in new
       slides[n].classList.add('active');
       slides[n].removeAttribute('aria-hidden');
 
-      // Reset previous slide elements immediately
-      const prevAnimatedEls = slides[prev].querySelectorAll('.eyebrow, .display-xl, .display-lg, .display-md, .body, .check-list li, .cross-list li, .contact-card, .screen-frame, .img-card, .price-card, .deco-block, .stat-box, .resp-item, .need-item, .timeline-steps > div, .tag, .cta-btn, .result-bar');
-      prevAnimatedEls.forEach(el => {
-        el.style.transition = 'none';
-        el.style.opacity = '1';
-        el.style.transform = 'none';
-      });
+      updateChrome(n);
 
-      // Motion Animation — use rAF to avoid zero-opacity flash
-      const animatedEls = slides[n].querySelectorAll('.eyebrow, .display-xl, .display-lg, .display-md, .body, .check-list li, .cross-list li, .contact-card, .screen-frame, .img-card, .price-card, .deco-block, .stat-box, .resp-item, .need-item, .timeline-steps > div, .tag, .cta-btn, .result-bar');
+      if (push) history.replaceState(null, '', '#slide-' + (n+1));
 
-      // Set initial state synchronously before browser paints
-      animatedEls.forEach(el => {
-        el.style.transition = 'none';
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(12px)';
-      });
-
-      // Use double rAF to ensure browser has committed the initial state before animating
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          animate(
-            animatedEls,
-            { opacity: 1, transform: "none" },
-            { delay: stagger(0.04), duration: 0.55, easing: [0.22, 1, 0.36, 1] }
-          );
-        });
-      });
-
-      // Dots
-      const dots = getDots();
-      dots[prev].classList.remove('active');
-      dots[prev].setAttribute('aria-selected', 'false');
-      dots[n].classList.add('active');
-      dots[n].setAttribute('aria-selected', 'true');
-
-      // Progress
-      const pct = TOTAL <= 1 ? 100 : (n / (TOTAL - 1)) * 100;
-      progressFill.style.width = pct + '%';
-
-      // Counter
-      slideCounter.textContent = String(n + 1).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
-
-      // Slide name chrome
-      slideNameEl.textContent = SLIDE_NAMES[n] || '';
-
-      // Buttons
-      btnPrev.disabled = !LOOP && n === 0;
-      btnNext.disabled = !LOOP && n === TOTAL - 1;
-
-      // SR
-      srLive.textContent = 'Slide ' + (n + 1) + ' of ' + TOTAL + ': ' + (SLIDE_NAMES[n] || '');
-
-      // Hash
-      if (pushState) {
-        history.replaceState(null, '', '#slide-' + (n + 1));
-      }
-
-      // 550ms duration + 0.04 * ~14 elements stagger = ~1110ms total; unlock at 700ms to allow early nav
-      setTimeout(() => { isAnimating = false; }, 700);
+      // Unlock after fade completes (350ms)
+      setTimeout(() => { busy = false; }, 350);
     }
 
-    function next() {
-      if (current < TOTAL - 1) goTo(current + 1);
-      else if (LOOP) goTo(0);
-    }
+    // Init
+    updateChrome(0);
 
-    function prev() {
-      if (current > 0) goTo(current - 1);
-      else if (LOOP) goTo(TOTAL - 1);
-    }
-
-    // ── INIT ─────────────────────────────────────────
-    goTo(0, false);
-
-    // ── HASH ROUTING ─────────────────────────────────
-    function routeFromHash() {
-      const hash = window.location.hash;
-      const m = hash.match(/^#slide-(\d+)$/);
+    // Hash routing
+    function fromHash() {
+      const m = location.hash.match(/^#slide-(\d+)$/);
       if (m) {
         const idx = parseInt(m[1], 10) - 1;
-        if (idx >= 0 && idx < TOTAL) goTo(idx, false);
+        if (idx > 0 && idx < TOTAL) {
+          current = idx;
+          slides.forEach((s, i) => {
+            if (i === idx) { s.classList.add('active'); s.removeAttribute('aria-hidden'); }
+            else           { s.classList.remove('active'); s.setAttribute('aria-hidden','true'); }
+          });
+          updateChrome(idx);
+        }
       }
     }
-    routeFromHash();
-    window.addEventListener('hashchange', routeFromHash);
+    fromHash();
+    window.addEventListener('hashchange', fromHash);
 
-    // ── BUTTONS ──────────────────────────────────────
-    btnPrev.addEventListener('click', prev);
-    btnNext.addEventListener('click', next);
+    // Buttons
+    btnPrev.addEventListener('click', () => goTo(current - 1));
+    btnNext.addEventListener('click', () => goTo(current + 1));
 
-    // ── KEYBOARD ─────────────────────────────────────
-    document.addEventListener('keydown', function(e) {
+    // Keyboard
+    document.addEventListener('keydown', e => {
       if (e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
-      switch (e.key) {
-        case 'ArrowRight':
-        case 'ArrowDown':
-        case ' ':
-          e.preventDefault();
-          next();
-          break;
-        case 'ArrowLeft':
-        case 'ArrowUp':
-          e.preventDefault();
-          prev();
-          break;
-        case 'Home':
-          e.preventDefault();
-          goTo(0);
-          break;
-        case 'End':
-          e.preventDefault();
-          goTo(TOTAL - 1);
-          break;
-        case 'f':
-        case 'F':
-          toggleFullscreen();
-          break;
-        case 'Escape':
-          if (document.fullscreenElement) document.exitFullscreen();
-          break;
-      }
+      if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current+1); }
+      if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); goTo(current-1); }
+      if (e.key === 'Home')  { e.preventDefault(); goTo(0); }
+      if (e.key === 'End')   { e.preventDefault(); goTo(TOTAL-1); }
+      if (e.key === 'f' || e.key === 'F') toggleFs();
+      if (e.key === 'Escape' && document.fullscreenElement) document.exitFullscreen();
     });
 
-    // ── TOUCH / SWIPE ─────────────────────────────────
-    let touchStartX = 0;
-    let touchStartY = 0;
-
-    document.addEventListener('touchstart', function(e) {
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-    }, { passive: true });
-
-    document.addEventListener('touchend', function(e) {
-      const dx = touchStartX - e.changedTouches[0].clientX;
-      const dy = touchStartY - e.changedTouches[0].clientY;
-      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.6) {
-        if (dx > 0) next();
-        else prev();
+    // Touch swipe
+    let tx = 0, ty = 0;
+    document.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, { passive: true });
+    document.addEventListener('touchend', e => {
+      const dx = tx - e.changedTouches[0].clientX;
+      const dy = ty - e.changedTouches[0].clientY;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        if (dx > 0) goTo(current+1); else goTo(current-1);
       }
     }, { passive: true });
 
-    // ── FULLSCREEN ───────────────────────────────────
-    function toggleFullscreen() {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(() => {});
-        btnFs.textContent = '⛶';
-        btnFs.setAttribute('aria-label', 'Exit fullscreen');
-      } else {
-        document.exitFullscreen().catch(() => {});
-        btnFs.textContent = '⛶';
-        btnFs.setAttribute('aria-label', 'Enter fullscreen');
-      }
+    // Fullscreen
+    function toggleFs() {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{});
+      else document.exitFullscreen().catch(()=>{});
     }
-
-    btnFs.addEventListener('click', toggleFullscreen);
-
-    document.addEventListener('fullscreenchange', function() {
-      if (document.fullscreenElement) {
-        btnFs.textContent = '✕';
-        btnFs.setAttribute('aria-label', 'Exit fullscreen');
-      } else {
-        btnFs.textContent = '⛶';
-        btnFs.setAttribute('aria-label', 'Enter fullscreen');
-      }
+    btnFs.addEventListener('click', toggleFs);
+    document.addEventListener('fullscreenchange', () => {
+      btnFs.textContent = document.fullscreenElement ? '✕' : '⛶';
     });
 
   })();
