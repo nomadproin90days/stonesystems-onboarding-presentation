@@ -235,6 +235,37 @@
       flex: 1; display: flex; flex-direction: column;
       gap: 8px; min-width: 0;
     }
+
+    /* ── MOBILE ──────────────────────────────────────── */
+    @media (max-width: 640px) {
+      #viewer { inset: var(--chrome-h) 0 40px 0; }
+      .slide  { padding: 16px 20px 20px; }
+
+      .s-body-split,
+      .s-body-split-40 { flex-direction: column; gap: 20px; align-items: stretch; }
+
+      /* On slide 1, hide the image/screen-frame col on mobile — show text + card only */
+      .s-body-split-40 > .s-col:last-child .screen-frame,
+      .s-body-split-40 > .s-col:last-child .img-card { display: none; }
+
+      /* Slide 1 contact card gets full width */
+      .contact-card { padding: 16px; }
+      .contact-row  { font-size: 0.78rem; gap: 8px; }
+
+      .display-xl { font-size: clamp(2rem, 8vw, 3rem); }
+      .display-lg { font-size: clamp(1.6rem, 6vw, 2.4rem); }
+      .display-md { font-size: clamp(1.3rem, 5vw, 2rem); }
+
+      .stat-row   { gap: 10px; }
+      .stat-box   { padding: 14px 10px; }
+      .price-cards { flex-direction: column; }
+
+      /* Timeline: shrink text */
+      .tl-name  { font-size: 0.62rem; }
+      .tl-desc  { font-size: 0.52rem; }
+      .tl-day   { font-size: 0.55rem; }
+      .tl-circle { width: 36px; height: 36px; font-size: 0.9rem; }
+    }
     .s-header { margin-bottom: 28px; }
     .centered { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; flex: 1; }
     .centered-left { display: flex; flex-direction: column; }
