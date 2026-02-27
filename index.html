@@ -244,9 +244,10 @@
       .s-body-split,
       .s-body-split-40 { flex-direction: column; gap: 20px; align-items: stretch; }
 
-      /* On slide 1, hide the image/screen-frame col on mobile — show text + card only */
-      .s-body-split-40 > .s-col:last-child .screen-frame,
-      .s-body-split-40 > .s-col:last-child .img-card { display: none; }
+      /* Image columns: constrain size on mobile so they show compactly below text */
+      .screen-frame { max-height: 180px; }
+      .screen-frame img { max-height: 180px; }
+      .img-card { max-height: 180px; overflow: hidden; }
 
       /* Slide 1 contact card gets full width */
       .contact-card { padding: 16px; }
@@ -586,25 +587,21 @@
           <div class="spacer-8"></div>
           <span class="tag accent anim">Prevents texts from being blocked</span>
         </div>
-        <div class="s-col" style="justify-content:center;">
-          <div class="deco-block anim" style="background:rgba(122,181,204,0.04);border-color:rgba(122,181,204,0.18);">
-            <div class="list-label" style="color:var(--steel);margin-bottom:16px;">Approval Roadmap</div>
-            <ul class="need-list">
-              <li class="need-item" style="border-color:rgba(122,181,204,0.15);">
-                <span class="need-icon" style="color:var(--steel);">01</span>
-                <div><div class="need-text">Brand Identity</div><div class="need-note">Legal Name + EIN Submission</div></div>
-              </li>
-              <li class="need-item" style="border-color:var(--copper-border);">
-                <span class="need-icon" style="color:var(--copper);">🕒</span>
-                <div><div class="need-text">Carrier Review</div><div class="need-note">7–10 day manual vetting period</div></div>
-              </li>
-              <li class="need-item" style="border-color:rgba(114,181,138,0.2);">
-                <span class="need-icon" style="color:var(--green);">✓</span>
-                <div><div class="need-text">Verified Status</div><div class="need-note">100% Deliverability Active</div></div>
-              </li>
-            </ul>
-            <hr class="rule" style="opacity:0.3;">
-            <p class="caption" style="text-align:center;line-height:1.5;">This is the single biggest bottleneck in setup. We submit your data the moment you provide it to start the clock.</p>
+        <div class="s-col" style="justify-content:center;align-items:stretch;padding:0 0 0 20px;">
+          <div class="anim" style="display:flex;flex-direction:column;gap:10px;height:100%;justify-content:center;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <span style="font-size:0.6rem;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;color:var(--steel);">Signal House · A2P Brand Registration</span>
+              <a href="./signalhouse-ein.html" target="_blank" style="font-size:0.6rem;font-weight:600;color:var(--copper);text-decoration:none;letter-spacing:0.08em;border:1px solid var(--copper-border);padding:3px 9px;border-radius:4px;">Open Full Form ↗</a>
+            </div>
+            <div style="flex:1;position:relative;border-radius:10px;overflow:hidden;border:1px solid rgba(122,181,204,0.2);min-height:320px;max-height:420px;">
+              <iframe
+                src="./signalhouse-ein.html"
+                style="width:100%;height:100%;border:none;display:block;"
+                title="SignalHouse A2P EIN Registration Form"
+                scrolling="auto"
+              ></iframe>
+            </div>
+            <p style="font-size:0.62rem;color:var(--t3);text-align:center;margin:0;line-height:1.5;">This is the exact form we complete together. Have your <strong style="color:var(--copper);">EIN</strong> and <strong style="color:var(--copper);">legal business name</strong> ready.</p>
           </div>
         </div>
       </div>
